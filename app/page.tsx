@@ -45,6 +45,8 @@ const NARRATIVES = [
   'The leaderboard is starting to recognize you.',
 ];
 
+// TODO: Refactor this after Christmas
+
 const Home = () => {
   const [API_DATA, setAPI_DATA] = useState<TUserData | null>(null);
   const [step, setStep] = useState(-2);
