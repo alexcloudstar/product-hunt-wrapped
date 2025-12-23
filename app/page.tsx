@@ -101,6 +101,30 @@ const Home = () => {
     fetchMakers();
   }, []);
 
+  // Dynamically select persona based on user data
+  const selectPersona = () => {
+    if (!API_DATA) return PERSONAS[0];
+    const user = API_DATA.data.viewer.user;
+    const madePosts = user.madePosts.nodes ?? [];
+    const topicsCount = API_DATA.data.topics.totalCount ?? 0;
+    const votes = madePosts.reduce(
+      (sum, p) => sum + (typeof p.votesCount === 'number' ? p.votesCount : 0),
+      0
+    );
+    // Example logic: prioritize by achievements
+    if (madePosts.length >= 5) return PERSONAS[3]; // Serial Maker
+    if (topicsCount >= 20) return PERSONAS[4]; // Trendsetter
+    if (votes >= 1000) return PERSONAS[0]; // Blitzscaler
+    if (
+      madePosts.some(
+        p => typeof p.yearlyRank === 'number' && p.yearlyRank < 1000
+      )
+    )
+      return PERSONAS[1]; // Global Contender
+    if (votes >= 300) return PERSONAS[5]; // Growth Architect
+    return PERSONAS[2]; // Community Pillar
+  };
+
   return (
     <main className='relative min-h-screen bg-black text-white font-sans overflow-hidden select-none'>
       <AnimatePresence mode='wait'>
@@ -253,7 +277,7 @@ const Home = () => {
                       </h2>
                     </div>
                   )}
-                  {step === 9 && <PersonaReveal persona={PERSONAS[1]} />}
+                  {step === 9 && <PersonaReveal persona={selectPersona()} />}
                   {step === 10 &&
                     (() => {
                       const nodes =
@@ -279,8 +303,8 @@ const Home = () => {
                         typeof bestProduct.yearlyRank === 'number'
                           ? `#${bestProduct.yearlyRank}`
                           : '—';
-                      // For persona, use the same as PersonaReveal above (PERSONAS[1])
-                      const persona = PERSONAS[1].name;
+                      // Use the same dynamic persona as PersonaReveal above
+                      const persona = selectPersona().name;
                       return (
                         <FinalCard
                           username={API_DATA?.data.viewer.user.username || ''}
