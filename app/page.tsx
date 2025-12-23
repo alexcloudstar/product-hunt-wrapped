@@ -1,13 +1,13 @@
 'use client';
 
-import BigStat from '@/componets/BigStat';
-import FinalCard from '@/componets/FinalCard';
-import Landing from '@/componets/Landing';
-import LoadingScreen from '@/componets/LoadingScreen';
-import PersonaReveal from '@/componets/PersonaReveal';
-import ProductDetail from '@/componets/ProductDetail';
-import ProgressBar from '@/componets/ProgressBar';
-import UserInput from '@/componets/UserInput';
+import BigStat from '@/components/BigStat';
+import FinalCard from '@/components/FinalCard';
+import Landing from '@/components/Landing';
+import LoadingScreen from '@/components/LoadingScreen';
+import PersonaReveal from '@/components/PersonaReveal';
+import ProductDetail from '@/components/ProductDetail';
+import ProgressBar from '@/components/ProgressBar';
+import UserInput from '@/components/UserInput';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Fingerprint, Globe, Layout, Rocket, Search, Zap } from 'lucide-react';
 import { useState } from 'react';
