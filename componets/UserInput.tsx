@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import UserMarquee from './UserMarquee';
 import { Dispatch, SetStateAction } from 'react';
+import Link from 'next/link';
 
 type TUserInputProps = {
   token: string;
@@ -67,6 +68,15 @@ const UserInput = ({
             </button>
           </div>
         </div>
+        <small className='flex items-center justify-center font-bold text-white/60'>
+          <Link
+            href='https://www.producthunt.com/v2/oauth/applications'
+            target='_blank'
+            className='underline underline-offset-4'
+          >
+            You can get your token from Product Hunt API dashboard
+          </Link>
+        </small>
       </div>
 
       <div className='w-full pb-12'>
