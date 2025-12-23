@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import UserMarquee from './UserMarquee';
 import { Dispatch, SetStateAction } from 'react';
 import Link from 'next/link';
+import ProductHuntBadge from './ProductHuntBadge';
 
 type TUserInputProps = {
   token: string;
@@ -33,6 +34,7 @@ const UserInput = ({
 
       <div className='w-full max-w-md px-8 z-10 space-y-12'>
         <div className='text-center space-y-4'>
+          <ProductHuntBadge />
           <h1 className='text-6xl font-black italic uppercase tracking-tighter leading-none'>
             Find Your <br />
             <span className='text-[#FF6154]'>Rank.</span>

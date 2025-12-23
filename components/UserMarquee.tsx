@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useState } from 'react';
 
 type TUserMarqueeProps = {
   items: string[];
