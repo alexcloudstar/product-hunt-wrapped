@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     siteName: 'PH Wrapped',
     images: [
       {
-        url: '/og-image.png', // Make sure to place your logo/banner in the public folder
+        url: '/og-image.jpg', // Make sure to place your logo/banner in the public folder
         width: 1200,
         height: 630,
         alt: 'Product Hunt Wrapped 2025 Dashboard',
