@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     siteName: 'PH Wrapped',
     images: [
       {
-        url: '/og-image.jpg', // Make sure to place your logo/banner in the public folder
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Product Hunt Wrapped 2025 Dashboard',
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: 'Product Hunt Wrapped 2025',
     description:
       'My year as a maker, visualized. Generate your PH Wrapped now.',
-    creator: '@alexcloudstar', // Replace with your actual X handle
+    creator: '@alexcloudstar',
     images: ['/og-image.png'],
   },
   robots: {

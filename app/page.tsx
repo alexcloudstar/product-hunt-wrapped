@@ -47,7 +47,7 @@ const NARRATIVES = [
 
 const Home = () => {
   const [API_DATA, setAPI_DATA] = useState<TUserData | null>(null);
-  const [step, setStep] = useState(-2); // -2 is User Input
+  const [step, setStep] = useState(-2);
   const [token, setToken] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisText, setAnalysisText] = useState('Scanning API...');
@@ -84,7 +84,6 @@ const Home = () => {
 
     setAPI_DATA(data);
 
-    // Logic for Neon DB connection would be triggered here
     setStep(-1);
   };
 
@@ -149,11 +148,11 @@ const Home = () => {
                       icon={<Rocket className='text-[#FF6154]' />}
                     />
                   )}
-                  {/* Dynamically render a ProductDetail for each product, each on its own step */}
+
                   {(() => {
                     const nodes =
                       API_DATA?.data.viewer.user.madePosts.nodes ?? [];
-                    // Product details start at step 1
+
                     if (step > 0 && step <= nodes.length) {
                       return <ProductDetail product={nodes[step - 1]} />;
                     }
@@ -183,7 +182,7 @@ const Home = () => {
                       const nodes =
                         API_DATA?.data?.viewer?.user?.madePosts?.nodes ?? [];
                       if (nodes.length === 0) return null;
-                      // Find the product with the best (lowest) yearlyRank (ignoring nulls)
+
                       const bestProduct = nodes
                         .filter(p => typeof p.yearlyRank === 'number')
                         .sort(
@@ -210,13 +209,14 @@ const Home = () => {
                     (() => {
                       const nodes =
                         API_DATA?.data?.viewer?.user?.madePosts?.nodes ?? [];
-                      // Sum up votesCount for all products
+
                       const totalVotes = nodes.reduce(
                         (sum, p) =>
                           sum +
                           (typeof p.votesCount === 'number' ? p.votesCount : 0),
                         0
                       );
+
                       return (
                         <BigStat
                           label='The Crowd Roared'
