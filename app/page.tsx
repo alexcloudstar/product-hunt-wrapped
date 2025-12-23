@@ -45,8 +45,6 @@ const NARRATIVES = [
   'The leaderboard is starting to recognize you.',
 ];
 
-// TODO: Refactor this file to smaller components after Christmas
-
 const Home = () => {
   const [API_DATA, setAPI_DATA] = useState<TUserData | null>(null);
   const [step, setStep] = useState(-2);
@@ -101,7 +99,6 @@ const Home = () => {
     fetchMakers();
   }, []);
 
-  // Dynamically select persona based on user data
   const selectPersona = () => {
     if (!API_DATA) return PERSONAS[0];
     const user = API_DATA.data.viewer.user;
@@ -111,18 +108,18 @@ const Home = () => {
       (sum, p) => sum + (typeof p.votesCount === 'number' ? p.votesCount : 0),
       0
     );
-    // Example logic: prioritize by achievements
-    if (madePosts.length >= 5) return PERSONAS[3]; // Serial Maker
-    if (topicsCount >= 20) return PERSONAS[4]; // Trendsetter
-    if (votes >= 1000) return PERSONAS[0]; // Blitzscaler
+
+    if (madePosts.length >= 5) return PERSONAS[3];
+    if (topicsCount >= 20) return PERSONAS[4];
+    if (votes >= 1000) return PERSONAS[0];
     if (
       madePosts.some(
         p => typeof p.yearlyRank === 'number' && p.yearlyRank < 1000
       )
     )
-      return PERSONAS[1]; // Global Contender
-    if (votes >= 300) return PERSONAS[5]; // Growth Architect
-    return PERSONAS[2]; // Community Pillar
+      return PERSONAS[1];
+    if (votes >= 300) return PERSONAS[5];
+    return PERSONAS[2];
   };
 
   return (
@@ -303,7 +300,7 @@ const Home = () => {
                         typeof bestProduct.yearlyRank === 'number'
                           ? `#${bestProduct.yearlyRank}`
                           : '—';
-                      // Use the same dynamic persona as PersonaReveal above
+
                       const persona = selectPersona().name;
                       return (
                         <FinalCard
