@@ -60,11 +60,12 @@ const UserInput = ({
             />
             <button
               onClick={() => token && onSubmit()}
-              className={`absolute right-3 top-1/2 -translate-y-1/2 p-4 rounded-xl transition-all ${
+              className={`absolute right-3 top-1/2 -translate-y-1/2 p-4 rounded-xl transition-all cursor-pointer disabled:cursor-not-allowed ${
                 token
                   ? 'bg-[#FF6154] text-white scale-100'
                   : 'bg-white/5 text-white/20 scale-90'
               }`}
+              disabled={!token}
             >
               <ArrowRight size={20} strokeWidth={3} />
             </button>

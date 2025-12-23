@@ -2,6 +2,7 @@
 
 import { db, makers_table } from '@/db';
 import { revalidatePath } from 'next/cache';
+import { getMakerByUsername } from './getMakers';
 
 export type TUserData = {
   data: {
@@ -199,11 +200,15 @@ export const getUserData = async (token: string) => {
 
   const data = await response.json();
 
-  await db.insert(makers_table).values({
-    username: data.data.viewer.user.username,
-  });
+  const exists = await getMakerByUsername(data.data.viewer.user.username);
 
-  revalidatePath('/');
+  if (!exists) {
+    await db.insert(makers_table).values({
+      username: data.data.viewer.user.username,
+    });
+
+    revalidatePath('/');
+  }
 
   return data;
 };
