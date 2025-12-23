@@ -1,3 +1,8 @@
+'use server';
+
+import { db, makers_table } from '@/db';
+import { revalidatePath } from 'next/cache';
+
 export type TUserData = {
   data: {
     viewer: {
@@ -193,5 +198,12 @@ export const getUserData = async (token: string) => {
   }
 
   const data = await response.json();
+
+  await db.insert(makers_table).values({
+    username: data.data.viewer.user.username,
+  });
+
+  revalidatePath('/');
+
   return data;
 };

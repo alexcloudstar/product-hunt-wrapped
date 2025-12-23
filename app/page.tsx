@@ -10,8 +10,9 @@ import ProgressBar from '@/components/ProgressBar';
 import UserInput from '@/components/UserInput';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Fingerprint, Globe, Layout, Rocket, Search, Zap } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getUserData, TUserData } from './actions/getUserData';
+import { getMakers } from './actions/getMakers';
 
 const PERSONAS = [
   { name: 'The Blitzscaler', desc: 'You ship fast and scale hard.' },
@@ -50,14 +51,7 @@ const Home = () => {
   const [token, setToken] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisText, setAnalysisText] = useState('Scanning API...');
-  const [recentMakers, _] = useState([
-    'levelsio',
-    'bentossell',
-    'chrismessina',
-    'alexcloudstar',
-    'rrhoover',
-    'mubashariqbal',
-  ]);
+  const [recentMakers, setRecentMakers] = useState<string[]>([]);
 
   const next = () => step < 10 && setStep(s => s + 1);
   const prev = () => step > 0 && setStep(s => s - 1);
@@ -93,6 +87,18 @@ const Home = () => {
     // Logic for Neon DB connection would be triggered here
     setStep(-1);
   };
+
+  useEffect(() => {
+    const fetchMakers = async () => {
+      const makers = await getMakers();
+
+      setRecentMakers(
+        makers.map((maker: { username: string }) => maker.username)
+      );
+    };
+
+    fetchMakers();
+  }, []);
 
   return (
     <main className='relative min-h-screen bg-black text-white font-sans overflow-hidden select-none'>
