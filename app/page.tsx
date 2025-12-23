@@ -1,65 +1,265 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import BigStat from '@/componets/BigStat';
+import FinalCard from '@/componets/FinalCard';
+import Landing from '@/componets/Landing';
+import LoadingScreen from '@/componets/LoadingScreen';
+import PersonaReveal from '@/componets/PersonaReveal';
+import ProductDetail from '@/componets/ProductDetail';
+import ProgressBar from '@/componets/ProgressBar';
+import UserInput from '@/componets/UserInput';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Fingerprint, Globe, Layout, Rocket, Search, Zap } from 'lucide-react';
+import { useState } from 'react';
+import { getUserData, TUserData } from './actions/getUserData';
+
+const PERSONAS = [
+  { name: 'The Blitzscaler', desc: 'You ship fast and scale hard.' },
+  {
+    name: 'The Global Contender',
+    desc: 'Cracking the yearly top 1000 is no small feat.',
+  },
+  {
+    name: 'The Community Pillar',
+    desc: 'High engagement and consistent reviews.',
+  },
+  {
+    name: 'The Serial Maker',
+    desc: "You don't just launch; you iterate with precision.",
+  },
+  {
+    name: 'The Trendsetter',
+    desc: 'Mastering 20 unique topics? You define the meta.',
+  },
+  {
+    name: 'The Growth Architect',
+    desc: 'Every launch is a masterclass in strategy.',
+  },
+];
+
+const NARRATIVES = [
+  "You didn't just build, you dominated.",
+  '2025: The year of the 5-star builder.',
+  'Your roadmap was built on pure grit.',
+  'The leaderboard is starting to recognize you.',
+];
+
+const Home = () => {
+  const [API_DATA, setAPI_DATA] = useState<TUserData | null>(null);
+  const [step, setStep] = useState(-2); // -2 is User Input
+  const [token, setToken] = useState('');
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisText, setAnalysisText] = useState('Scanning API...');
+  const [recentMakers, _] = useState([
+    'levelsio',
+    'bentossell',
+    'chrismessina',
+    'alexcloudstar',
+    'rrhoover',
+    'mubashariqbal',
+  ]);
+
+  const next = () => step < 10 && setStep(s => s + 1);
+  const prev = () => step > 0 && setStep(s => s - 1);
+
+  const startAnalysis = () => {
+    setAnalyzing(true);
+    const sequence = [
+      'Analyzing Vote Velocity...',
+      'Cross-referencing Yearly Ranks...',
+      'Checking Topic Diversity...',
+      'Identity Confirmed.',
+    ];
+    sequence.forEach((text, i) => {
+      setTimeout(() => {
+        setAnalysisText(text);
+        if (i === sequence.length - 1) {
+          setTimeout(() => {
+            setAnalyzing(false);
+            setStep(9);
+          }, 1000);
+        }
+      }, i * 1200);
+    });
+  };
+
+  const handleDbSubmit = async () => {
+    if (!token) return;
+
+    const data = await getUserData(token);
+
+    setAPI_DATA(data);
+
+    // Logic for Neon DB connection would be triggered here
+    setStep(-1);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className='relative min-h-screen bg-black text-white font-sans overflow-hidden select-none'>
+      <AnimatePresence mode='wait'>
+        {step === -2 ? (
+          <UserInput
+            key='input'
+            token={token}
+            setToken={setToken}
+            recentMakers={recentMakers}
+            onSubmit={handleDbSubmit}
+          />
+        ) : step === -1 ? (
+          <Landing setStep={setStep} />
+        ) : analyzing ? (
+          <LoadingScreen text={analysisText} />
+        ) : (
+          <motion.div
+            key='story'
+            className='relative z-10 h-screen flex flex-col'
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <ProgressBar current={step} total={10} />
+            <div
+              className='flex-1 flex items-center justify-center p-6'
+              onClick={e => {
+                const target = e.target as HTMLElement;
+                if (target.closest('button')) return;
+                e.clientX > window.innerWidth / 2
+                  ? step === 8
+                    ? startAnalysis()
+                    : next()
+                  : prev();
+              }}
+            >
+              <AnimatePresence mode='wait'>
+                <motion.div
+                  key={step}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.1 }}
+                  className='w-full max-w-lg'
+                >
+                  {step === 0 && (
+                    <BigStat
+                      label='The 2025 Summary'
+                      val={API_DATA?.data.viewer.user.madePosts.totalCount || 0}
+                      sub='Products Launched'
+                      icon={<Rocket className='text-[#FF6154]' />}
+                    />
+                  )}
+                  {/* Dynamically render a ProductDetail for each product, each on its own step */}
+                  {(() => {
+                    const nodes =
+                      API_DATA?.data.viewer.user.madePosts.nodes ?? [];
+                    // Product details start at step 1
+                    if (step > 0 && step <= nodes.length) {
+                      return <ProductDetail product={nodes[step - 1]} />;
+                    }
+                    return null;
+                  })()}
+                  {step === 4 && (
+                    <BigStat
+                      label='The Hunter Mindset'
+                      val={
+                        API_DATA?.data.viewer.user.submittedPosts.totalCount ||
+                        0
+                      }
+                      sub='Posts Found & Submitted'
+                      icon={<Search className='text-blue-400' />}
+                    />
+                  )}
+                  {step === 5 && (
+                    <BigStat
+                      label='Range'
+                      val={API_DATA?.data.topics.totalCount || 0}
+                      sub='Niche Topics Conquered'
+                      icon={<Layout className='text-purple-400' />}
+                    />
+                  )}
+                  {step === 6 &&
+                    (() => {
+                      const nodes =
+                        API_DATA?.data?.viewer?.user?.madePosts?.nodes ?? [];
+                      if (nodes.length === 0) return null;
+                      // Find the product with the best (lowest) yearlyRank (ignoring nulls)
+                      const bestProduct = nodes
+                        .filter(p => typeof p.yearlyRank === 'number')
+                        .sort(
+                          (a, b) =>
+                            (a.yearlyRank ?? Infinity) -
+                            (b.yearlyRank ?? Infinity)
+                        )[0];
+                      return (
+                        <div className='text-center'>
+                          <Globe
+                            size={80}
+                            className='mx-auto mb-8 text-[#FF6154] animate-pulse'
+                          />
+                          <div className='text-8xl font-black italic'>
+                            #{bestProduct?.yearlyRank ?? '—'}
+                          </div>
+                          <div className='text-white/40 font-bold uppercase tracking-widest mt-4 text-xs'>
+                            Global Yearly Rank ({bestProduct?.name ?? '—'})
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  {step === 7 &&
+                    (() => {
+                      const nodes =
+                        API_DATA?.data?.viewer?.user?.madePosts?.nodes ?? [];
+                      // Sum up votesCount for all products
+                      const totalVotes = nodes.reduce(
+                        (sum, p) =>
+                          sum +
+                          (typeof p.votesCount === 'number' ? p.votesCount : 0),
+                        0
+                      );
+                      return (
+                        <BigStat
+                          label='The Crowd Roared'
+                          val={totalVotes}
+                          sub='Total Upvotes across 2025'
+                          icon={
+                            <Zap
+                              className='text-yellow-400'
+                              fill='currentColor'
+                            />
+                          }
+                        />
+                      );
+                    })()}
+                  {step === 8 && (
+                    <div className='text-center'>
+                      <div className='text-white/40 mb-10 text-sm font-medium'>
+                        "
+                        {
+                          NARRATIVES[
+                            Math.floor(Math.random() * NARRATIVES.length)
+                          ]
+                        }
+                        "
+                      </div>
+                      <div className='w-24 h-24 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6'>
+                        <Fingerprint size={40} className='text-[#FF6154]' />
+                      </div>
+                      <h2 className='text-2xl font-black italic'>
+                        Reveal My Persona
+                      </h2>
+                    </div>
+                  )}
+                  {step === 9 && <PersonaReveal persona={PERSONAS[1]} />}
+                  {step === 10 && (
+                    <FinalCard
+                      username={API_DATA?.data.viewer.user.username || ''}
+                      onReset={() => setStep(-2)}
+                      avatar={API_DATA?.data.viewer.user.profileImage || ''}
+                    />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </main>
   );
-}
+};
+
+export default Home;
