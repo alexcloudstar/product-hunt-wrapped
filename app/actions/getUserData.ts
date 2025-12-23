@@ -202,7 +202,7 @@ export const getUserData = async (token: string) => {
 
   const exists = await getMakerByUsername(data.data.viewer.user.username);
 
-  if (!exists) {
+  if (!exists.length) {
     await db.insert(makers_table).values({
       username: data.data.viewer.user.username,
     });
