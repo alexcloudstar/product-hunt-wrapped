@@ -7,9 +7,21 @@ type TFinalCardProps = {
   onReset: () => void;
   username: string;
   avatar: string;
+  totalVotes: number;
+  bestRank: string;
+  globalRank: string;
+  persona: string;
 };
 
-const FinalCard = ({ onReset, username, avatar }: TFinalCardProps) => {
+const FinalCard = ({
+  onReset,
+  username,
+  avatar,
+  totalVotes,
+  bestRank,
+  globalRank,
+  persona,
+}: TFinalCardProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
 
@@ -53,7 +65,7 @@ const FinalCard = ({ onReset, username, avatar }: TFinalCardProps) => {
           </div>
         </div>
         <div className='text-8xl font-black leading-none tracking-tighter mb-2'>
-          442
+          {totalVotes}
         </div>
         <div className='text-[10px] font-black uppercase opacity-20 tracking-widest mb-10'>
           Total Votes 2025
@@ -63,19 +75,19 @@ const FinalCard = ({ onReset, username, avatar }: TFinalCardProps) => {
             <span className='text-[9px] font-bold opacity-30 uppercase'>
               Best Rank
             </span>
-            <span className='font-black text-sm'>#4 Daily</span>
+            <span className='font-black text-sm'>{bestRank}</span>
           </div>
           <div className='flex justify-between border-b pb-1'>
             <span className='text-[9px] font-bold opacity-30 uppercase'>
               Global Rank
             </span>
-            <span className='font-black text-sm'>#616</span>
+            <span className='font-black text-sm'>{globalRank}</span>
           </div>
           <div className='flex justify-between border-b pb-1'>
             <span className='text-[9px] font-bold opacity-30 uppercase'>
               Persona
             </span>
-            <span className='font-black text-sm italic'>Global Contender</span>
+            <span className='font-black text-sm italic'>{persona}</span>
           </div>
         </div>
         <div className='flex justify-between items-end'>

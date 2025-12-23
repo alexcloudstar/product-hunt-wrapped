@@ -251,13 +251,45 @@ const Home = () => {
                     </div>
                   )}
                   {step === 9 && <PersonaReveal persona={PERSONAS[1]} />}
-                  {step === 10 && (
-                    <FinalCard
-                      username={API_DATA?.data.viewer.user.username || ''}
-                      onReset={() => setStep(-2)}
-                      avatar={API_DATA?.data.viewer.user.profileImage || ''}
-                    />
-                  )}
+                  {step === 10 &&
+                    (() => {
+                      const nodes =
+                        API_DATA?.data.viewer.user.madePosts.nodes ?? [];
+                      const totalVotes = nodes.reduce(
+                        (sum, p) =>
+                          sum +
+                          (typeof p.votesCount === 'number' ? p.votesCount : 0),
+                        0
+                      );
+                      const bestProduct = nodes
+                        .filter(p => typeof p.dailyRank === 'number')
+                        .sort(
+                          (a, b) =>
+                            (a.dailyRank ?? Infinity) -
+                            (b.dailyRank ?? Infinity)
+                        )[0];
+                      const bestRank = bestProduct
+                        ? `#${bestProduct.dailyRank} Daily`
+                        : '—';
+                      const globalRank =
+                        bestProduct &&
+                        typeof bestProduct.yearlyRank === 'number'
+                          ? `#${bestProduct.yearlyRank}`
+                          : '—';
+                      // For persona, use the same as PersonaReveal above (PERSONAS[1])
+                      const persona = PERSONAS[1].name;
+                      return (
+                        <FinalCard
+                          username={API_DATA?.data.viewer.user.username || ''}
+                          onReset={() => setStep(-2)}
+                          avatar={API_DATA?.data.viewer.user.profileImage || ''}
+                          totalVotes={totalVotes}
+                          bestRank={bestRank}
+                          globalRank={globalRank}
+                          persona={persona}
+                        />
+                      );
+                    })()}
                 </motion.div>
               </AnimatePresence>
             </div>
