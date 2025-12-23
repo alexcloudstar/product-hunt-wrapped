@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { useState } from 'react';
 
 type TUserMarqueeProps = {
@@ -24,8 +25,18 @@ const UserMarquee = ({ items, reverse = false }: TUserMarqueeProps) => {
               reverse ? 'text-white/[0.05] text-4xl' : 'text-white/30 text-xs'
             }`}
           >
-            {!reverse && <span className='text-[#FF6154]'>@</span>}
-            {reverse ? '2025 RECAP' : item}
+            {!reverse && (
+              <Link
+                href={`https://producthunt.com/@${item}`}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                <span className='text-[#FF6154]'>@</span>
+                {item}
+              </Link>
+            )}
+
+            {reverse ? '2025 RECAP' : null}
             {!reverse && (
               <span className='mx-4 h-1 w-1 bg-white/20 rounded-full' />
             )}
