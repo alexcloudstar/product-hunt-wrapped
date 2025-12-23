@@ -153,9 +153,10 @@ const Home = () => {
                     const nodes =
                       API_DATA?.data.viewer.user.madePosts.nodes ?? [];
 
-                    if (step > 0 && step <= nodes.length) {
+                    if (nodes.length > 0 && step > 0 && step <= nodes.length) {
                       return <ProductDetail product={nodes[step - 1]} />;
                     }
+
                     return null;
                   })()}
                   {step === 4 && (
