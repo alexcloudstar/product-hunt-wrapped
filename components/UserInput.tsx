@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import UserMarquee from './UserMarquee';
 import { Dispatch, SetStateAction, useState } from 'react';
+import Image from 'next/image';
 
 type TUserInputProps = {
   token: string;
@@ -63,6 +64,20 @@ const UserInput = ({
 
       <div className='w-full max-w-md px-8 z-20 space-y-12'>
         <div className='text-center space-y-4'>
+          <a
+            href='https://www.producthunt.com/products/product-hunt-wrapped-2025?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-product-hunt-wrapped-2025'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='flex items-center justify-center'
+          >
+            <Image
+              alt='Product Hunt Wrapped 2025 - Your 2025 maker journey, visualized. Find your rank. | Product Hunt'
+              width={250}
+              height={54}
+              src='https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1054380&amp;theme=light&amp;t=1766664387356'
+            />
+          </a>
+
           <h1 className='text-6xl font-black italic uppercase tracking-tighter leading-none'>
             Find Your <br />
             <span className='text-[#FF6154]'>Rank.</span>
