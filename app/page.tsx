@@ -16,7 +16,27 @@ import { useEffect, useState } from 'react';
 import { getMakers } from './actions/getMakers';
 import { getUserData, TUserData } from './actions/getUserData';
 
-// ... (PERSONAS and NARRATIVES stay the same)
+const PERSONAS = [
+  { name: 'The Blitzscaler', desc: 'You ship fast and scale hard.' },
+  {
+    name: 'The Global Contender',
+    desc: 'Cracking the yearly top 1000 is no small feat.',
+  },
+  {
+    name: 'The Community Pillar',
+    desc: 'High engagement and consistent reviews.',
+  },
+  {
+    name: 'The Serial Maker',
+    desc: "You don't just launch; you iterate with precision.",
+  },
+];
+
+const NARRATIVES = [
+  "You didn't just build, you dominated.",
+  '2025: The year of the 5-star builder.',
+  'The leaderboard is starting to recognize you.',
+];
 
 const Home = () => {
   const [API_DATA, setAPI_DATA] = useState<TUserData | null>(null);
