@@ -14,10 +14,10 @@
 
 > **Your data, your control.**
 
-- 🛡️ **Zero Storage:** Your Product Hunt token is **never** stored or sent to any server—it's used only in your browser.
+- 🛡️ **Zero Storage:** Your Product Hunt token is **never** stored or sent to any server it's used only in your browser.
 - 🖥️ **Client-Side Only:** All API requests are made directly from your device.
 - ⏳ **Ephemeral:** Refresh or close the page, and your token is gone.
-- 🔎 **Open Source:** Audit the code yourself—privacy is built-in, not a promise.
+- 🔎 **Open Source:** Audit the code yourself privacy is built-in, not a promise.
 
 **Note:** To provide deep insights without hitting public API limits, this tool requires your **Product Hunt Developer Token**.
 
