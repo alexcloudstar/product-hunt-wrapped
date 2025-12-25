@@ -16,26 +16,52 @@ import { useEffect, useState } from 'react';
 import { getMakers } from './actions/getMakers';
 import { getUserData, TUserData } from './actions/getUserData';
 
-const PERSONAS = [
-  { name: 'The Blitzscaler', desc: 'You ship fast and scale hard.' },
-  {
+// --- EXPANDED PERSONAS ---
+const PERSONAS = {
+  LEGEND: {
+    name: 'The Industry Legend',
+    desc: 'Top tier ranks and massive community trust. You define Product Hunt.',
+  },
+  BLITZSCALER: {
+    name: 'The Blitzscaler',
+    desc: 'You ship fast, scale hard, and dominate the daily leaderboards.',
+  },
+  GLOBAL: {
     name: 'The Global Contender',
-    desc: 'Cracking the yearly top 1000 is no small feat.',
+    desc: 'Cracking the yearly top 1000 is a feat reserved for the elite.',
   },
-  {
-    name: 'The Community Pillar',
-    desc: 'High engagement and consistent reviews.',
-  },
-  {
+  SERIAL: {
     name: 'The Serial Maker',
-    desc: "You don't just launch; you iterate with precision.",
+    desc: "You don't just launch; you iterate with surgical precision.",
   },
-];
+  PILLAR: {
+    name: 'The Community Pillar',
+    desc: 'High engagement, consistent support, and a bedrock of the ecosystem.',
+  },
+  HUNTER: {
+    name: 'The Apex Hunter',
+    desc: 'You have an eye for greatness, discovering the next big things.',
+  },
+  ARCHITECT: {
+    name: 'The Growth Architect',
+    desc: 'Every launch you touch is a masterclass in strategic execution.',
+  },
+  NEWBIE: {
+    name: 'The Rising Star',
+    desc: '2025 was just the beginning. The ecosystem is starting to notice.',
+  },
+};
 
+// --- EXPANDED NARRATIVES ---
 const NARRATIVES = [
   "You didn't just build, you dominated.",
-  '2025: The year of the 5-star builder.',
-  'The leaderboard is starting to recognize you.',
+  '2025: The year your roadmap met reality.',
+  'The leaderboard is starting to recognize your name.',
+  'A year of grit, shipping, and 5-star reviews.',
+  "You turned 'Hello World' into a movement this year.",
+  'Your 2025 stats are looking like a hockey stick growth curve.',
+  "The ecosystem is louder because you're in it.",
+  'Calculated moves. Relentless shipping.',
 ];
 
 const Home = () => {
@@ -47,6 +73,7 @@ const Home = () => {
   const [recentMakers, setRecentMakers] = useState<string[]>([]);
 
   const TOTAL_STEPS = 11;
+
   const next = () => step < TOTAL_STEPS && setStep(s => s + 1);
   const prev = () => step > 0 && setStep(s => s - 1);
 
@@ -55,7 +82,7 @@ const Home = () => {
     const sequence = [
       'Analyzing Vote Velocity...',
       'Cross-referencing Yearly Ranks...',
-      'Checking Topic Diversity...',
+      'Synthesizing Community Impact...',
       'Identity Confirmed.',
     ];
     sequence.forEach((text, i) => {
@@ -89,23 +116,29 @@ const Home = () => {
   }, []);
 
   const selectPersona = () => {
-    if (!API_DATA) return PERSONAS[0];
+    if (!API_DATA) return PERSONAS.NEWBIE;
+
     const user = API_DATA.data.viewer.user;
     const madePosts = user.madePosts.nodes ?? [];
-    const votes = madePosts.reduce(
-      (sum, p) => sum + (typeof p.votesCount === 'number' ? p.votesCount : 0),
+    const totalVotes = madePosts.reduce(
+      (sum, p) => sum + (p.votesCount || 0),
       0
     );
-    if (madePosts.length >= 5) return PERSONAS[3];
-    if (votes >= 1000) return PERSONAS[0];
-    if (
-      madePosts.some(
-        p => typeof p.yearlyRank === 'number' && p.yearlyRank < 1000
-      )
-    )
-      return PERSONAS[1];
-    if (votes >= 300) return PERSONAS[5];
-    return PERSONAS[2];
+    const hunts = user.submittedPosts.totalCount || 0;
+    const products = user.madePosts.totalCount || 0;
+    const bestYearly = Math.min(...madePosts.map(p => p.yearlyRank || 9999));
+
+    // Logic-based determination
+    if (products > 3 && totalVotes > 2000 && bestYearly < 500)
+      return PERSONAS.LEGEND;
+    if (bestYearly < 1000) return PERSONAS.GLOBAL;
+    if (products >= 5) return PERSONAS.SERIAL;
+    if (totalVotes > 1000) return PERSONAS.BLITZSCALER;
+    if (hunts > products && hunts > 5) return PERSONAS.HUNTER;
+    if (user.votedPosts.totalCount > 100) return PERSONAS.PILLAR;
+    if (products >= 1) return PERSONAS.ARCHITECT;
+
+    return PERSONAS.NEWBIE;
   };
 
   return (
@@ -130,11 +163,13 @@ const Home = () => {
             className='relative z-10 h-screen flex flex-col'
           >
             <ProgressBar current={step} total={TOTAL_STEPS} />
+
             <div
               className='flex-1 flex items-center justify-center p-6'
               onClick={e => {
                 const target = e.target as HTMLElement;
-                if (target.closest('button')) return;
+                if (target.closest('button') || target.closest('a')) return;
+
                 if (e.clientX > window.innerWidth / 2) {
                   step === 9 ? startAnalysis() : next();
                 } else {
@@ -150,6 +185,7 @@ const Home = () => {
                   exit={{ opacity: 0, scale: 1.1 }}
                   className='w-full max-w-lg'
                 >
+                  {/* 0: Initial Stat */}
                   {step === 0 && (
                     <BigStat
                       label='The 2025 Summary'
@@ -158,16 +194,22 @@ const Home = () => {
                       icon={<Rocket className='text-[#FF6154]' />}
                     />
                   )}
+
+                  {/* 1: Longevity */}
                   {step === 1 && API_DATA && (
                     <AccountAge
                       createdAt={API_DATA.data.viewer.user.createdAt}
                     />
                   )}
+
+                  {/* 2: Support */}
                   {step === 2 && API_DATA && (
                     <SupportedProducts
                       count={API_DATA.data.viewer.user.votedPosts.totalCount}
                     />
                   )}
+
+                  {/* 3, 4, 5: Dynamic Product Highlights */}
                   {(() => {
                     const nodes =
                       API_DATA?.data.viewer.user.madePosts.nodes ?? [];
@@ -177,10 +219,13 @@ const Home = () => {
                       productIndex >= 0 &&
                       productIndex < nodes.length &&
                       productIndex < 3
-                    )
+                    ) {
                       return <ProductDetail product={nodes[productIndex]} />;
+                    }
                     return null;
                   })()}
+
+                  {/* 6: Hunting Stats */}
                   {step === 6 && (
                     <BigStat
                       label='The Hunter Mindset'
@@ -192,18 +237,18 @@ const Home = () => {
                       icon={<Search className='text-blue-400' />}
                     />
                   )}
+
+                  {/* 7: Global Achievement */}
                   {step === 7 &&
                     (() => {
                       const nodes =
                         API_DATA?.data?.viewer?.user?.madePosts?.nodes ?? [];
-                      if (nodes.length === 0) return null;
                       const bestProduct = [...nodes]
                         .filter(p => typeof p.yearlyRank === 'number')
                         .sort(
-                          (a, b) =>
-                            (a.yearlyRank ?? Infinity) -
-                            (b.yearlyRank ?? Infinity)
+                          (a, b) => (a.yearlyRank || 0) - (b.yearlyRank || 0)
                         )[0];
+
                       return (
                         <div className='text-center'>
                           <Globe
@@ -219,14 +264,14 @@ const Home = () => {
                         </div>
                       );
                     })()}
+
+                  {/* 8: Total Upvotes */}
                   {step === 8 &&
                     (() => {
                       const nodes =
                         API_DATA?.data?.viewer?.user?.madePosts?.nodes ?? [];
                       const totalVotes = nodes.reduce(
-                        (sum, p) =>
-                          sum +
-                          (typeof p.votesCount === 'number' ? p.votesCount : 0),
+                        (sum, p) => sum + (p.votesCount || 0),
                         0
                       );
                       return (
@@ -243,13 +288,18 @@ const Home = () => {
                         />
                       );
                     })()}
+
+                  {/* 9: Transition to Persona */}
                   {step === 9 && (
                     <div className='text-center'>
-                      <div className='text-white/40 mb-10 text-sm font-medium uppercase tracking-widest leading-relaxed'>
+                      <div className='text-white/40 mb-10 text-sm font-medium uppercase tracking-widest leading-relaxed px-4'>
                         "
                         {
                           NARRATIVES[
-                            Math.floor(Math.random() * NARRATIVES.length)
+                            Math.floor(
+                              (API_DATA?.data.viewer.user.username.length ||
+                                0) % NARRATIVES.length
+                            )
                           ]
                         }
                         "
@@ -258,31 +308,30 @@ const Home = () => {
                         <Fingerprint size={40} className='text-[#FF6154]' />
                       </div>
                       <h2 className='text-2xl font-black italic'>
-                        Reveal My Persona
+                        REVEAL MY PERSONA
                       </h2>
-                      <p className='text-[10px] text-white/20 mt-4 uppercase font-bold tracking-[0.2em]'>
-                        Tap to reveal
+                      <p className='text-[10px] text-white/20 mt-4 uppercase font-bold tracking-[0.2em] animate-bounce'>
+                        Tap to analyze
                       </p>
                     </div>
                   )}
+
+                  {/* 10: The Reveal */}
                   {step === 10 && <PersonaReveal persona={selectPersona()} />}
+
+                  {/* 11: Summary Card */}
                   {step === 11 &&
                     (() => {
                       const user = API_DATA?.data.viewer.user;
                       const nodes = user?.madePosts.nodes ?? [];
                       const totalVotes = nodes.reduce(
-                        (sum, p) =>
-                          sum +
-                          (typeof p.votesCount === 'number' ? p.votesCount : 0),
+                        (sum, p) => sum + (p.votesCount || 0),
                         0
                       );
-                      const bestProduct = [...nodes]
-                        .filter(p => typeof p.dailyRank === 'number')
-                        .sort(
-                          (a, b) =>
-                            (a.dailyRank ?? Infinity) -
-                            (b.dailyRank ?? Infinity)
-                        )[0];
+                      const bestProduct = [...nodes].sort(
+                        (a, b) => (a.dailyRank || 999) - (b.dailyRank || 999)
+                      )[0];
+
                       return (
                         <FinalCard
                           username={user?.username || ''}
@@ -290,7 +339,7 @@ const Home = () => {
                           avatar={user?.profileImage || ''}
                           totalVotes={totalVotes}
                           bestRank={
-                            bestProduct
+                            bestProduct?.dailyRank
                               ? `#${bestProduct.dailyRank} Daily`
                               : '—'
                           }
