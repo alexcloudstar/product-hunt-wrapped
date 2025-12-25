@@ -85,6 +85,10 @@ export type TUserData = {
           totalCount: number;
         };
         isMaker: boolean;
+        createdAt: string;
+        votedPosts: {
+          totalCount: number;
+        };
       };
     };
     topics: {
@@ -96,8 +100,7 @@ export type TUserData = {
 export const getUserData = async (token: string) => {
   const baseUrl = 'https://api.producthunt.com/v2/api/graphql';
 
-  const query = `
-  query User {
+  const query = `query User {
     viewer {
         user {
             name
@@ -177,10 +180,11 @@ export const getUserData = async (token: string) => {
                 totalCount
             }
             isMaker
+            createdAt
+            votedPosts {
+                totalCount
+            }
         }
-    }
-    topics {
-        totalCount
     }
 }
 `;

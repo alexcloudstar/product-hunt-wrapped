@@ -28,3 +28,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-family-base);
 }
+
+button {
+  cursor: pointer;
+}

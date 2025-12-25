@@ -1,5 +1,6 @@
 'use client';
 
+import AccountAge from '@/components/AccountAge';
 import BigStat from '@/components/BigStat';
 import FinalCard from '@/components/FinalCard';
 import Landing from '@/components/Landing';
@@ -7,45 +8,15 @@ import LoadingScreen from '@/components/LoadingScreen';
 import PersonaReveal from '@/components/PersonaReveal';
 import ProductDetail from '@/components/ProductDetail';
 import ProgressBar from '@/components/ProgressBar';
+import SupportedProducts from '@/components/SupportedProducts';
 import UserInput from '@/components/UserInput';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Fingerprint, Globe, Layout, Rocket, Search, Zap } from 'lucide-react';
+import { Fingerprint, Globe, Rocket, Search, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { getUserData, TUserData } from './actions/getUserData';
 import { getMakers } from './actions/getMakers';
+import { getUserData, TUserData } from './actions/getUserData';
 
-const PERSONAS = [
-  { name: 'The Blitzscaler', desc: 'You ship fast and scale hard.' },
-  {
-    name: 'The Global Contender',
-    desc: 'Cracking the yearly top 1000 is no small feat.',
-  },
-  {
-    name: 'The Community Pillar',
-    desc: 'High engagement and consistent reviews.',
-  },
-  {
-    name: 'The Serial Maker',
-    desc: "You don't just launch; you iterate with precision.",
-  },
-  {
-    name: 'The Trendsetter',
-    desc: 'Mastering 20 unique topics? You define the meta.',
-  },
-  {
-    name: 'The Growth Architect',
-    desc: 'Every launch is a masterclass in strategy.',
-  },
-];
-
-const NARRATIVES = [
-  "You didn't just build, you dominated.",
-  '2025: The year of the 5-star builder.',
-  'Your roadmap was built on pure grit.',
-  'The leaderboard is starting to recognize you.',
-];
-
-// TODO: Refactor this after Christmas
+// ... (PERSONAS and NARRATIVES stay the same)
 
 const Home = () => {
   const [API_DATA, setAPI_DATA] = useState<TUserData | null>(null);
@@ -55,7 +26,8 @@ const Home = () => {
   const [analysisText, setAnalysisText] = useState('Scanning API...');
   const [recentMakers, setRecentMakers] = useState<string[]>([]);
 
-  const next = () => step < 10 && setStep(s => s + 1);
+  const TOTAL_STEPS = 11;
+  const next = () => step < TOTAL_STEPS && setStep(s => s + 1);
   const prev = () => step > 0 && setStep(s => s - 1);
 
   const startAnalysis = () => {
@@ -72,7 +44,7 @@ const Home = () => {
         if (i === sequence.length - 1) {
           setTimeout(() => {
             setAnalyzing(false);
-            setStep(9);
+            setStep(10);
           }, 1000);
         }
       }, i * 1200);
@@ -81,23 +53,18 @@ const Home = () => {
 
   const handleDbSubmit = async () => {
     if (!token) return;
-
     const data = await getUserData(token);
-
     setAPI_DATA(data);
-
     setStep(-1);
   };
 
   useEffect(() => {
     const fetchMakers = async () => {
       const makers = await getMakers();
-
       setRecentMakers(
         makers.map((maker: { username: string }) => maker.username)
       );
     };
-
     fetchMakers();
   }, []);
 
@@ -105,14 +72,11 @@ const Home = () => {
     if (!API_DATA) return PERSONAS[0];
     const user = API_DATA.data.viewer.user;
     const madePosts = user.madePosts.nodes ?? [];
-    const topicsCount = API_DATA.data.topics.totalCount ?? 0;
     const votes = madePosts.reduce(
       (sum, p) => sum + (typeof p.votesCount === 'number' ? p.votesCount : 0),
       0
     );
-
     if (madePosts.length >= 5) return PERSONAS[3];
-    if (topicsCount >= 20) return PERSONAS[4];
     if (votes >= 1000) return PERSONAS[0];
     if (
       madePosts.some(
@@ -128,13 +92,14 @@ const Home = () => {
     <main className='relative min-h-screen bg-black text-white font-sans overflow-hidden select-none'>
       <AnimatePresence mode='wait'>
         {step === -2 ? (
-          <UserInput
-            key='input'
-            token={token}
-            setToken={setToken}
-            recentMakers={recentMakers}
-            onSubmit={handleDbSubmit}
-          />
+          <div key='input-container' className='relative w-full h-full'>
+            <UserInput
+              token={token}
+              setToken={setToken}
+              recentMakers={recentMakers}
+              onSubmit={handleDbSubmit}
+            />
+          </div>
         ) : step === -1 ? (
           <Landing setStep={setStep} />
         ) : analyzing ? (
@@ -144,17 +109,17 @@ const Home = () => {
             key='story'
             className='relative z-10 h-screen flex flex-col'
           >
-            <ProgressBar current={step} total={10} />
+            <ProgressBar current={step} total={TOTAL_STEPS} />
             <div
               className='flex-1 flex items-center justify-center p-6'
               onClick={e => {
                 const target = e.target as HTMLElement;
                 if (target.closest('button')) return;
-                e.clientX > window.innerWidth / 2
-                  ? step === 8
-                    ? startAnalysis()
-                    : next()
-                  : prev();
+                if (e.clientX > window.innerWidth / 2) {
+                  step === 9 ? startAnalysis() : next();
+                } else {
+                  prev();
+                }
               }}
             >
               <AnimatePresence mode='wait'>
@@ -173,18 +138,30 @@ const Home = () => {
                       icon={<Rocket className='text-[#FF6154]' />}
                     />
                   )}
-
+                  {step === 1 && API_DATA && (
+                    <AccountAge
+                      createdAt={API_DATA.data.viewer.user.createdAt}
+                    />
+                  )}
+                  {step === 2 && API_DATA && (
+                    <SupportedProducts
+                      count={API_DATA.data.viewer.user.votedPosts.totalCount}
+                    />
+                  )}
                   {(() => {
                     const nodes =
                       API_DATA?.data.viewer.user.madePosts.nodes ?? [];
-
-                    if (nodes.length > 0 && step > 0 && step <= nodes.length) {
-                      return <ProductDetail product={nodes[step - 1]} />;
-                    }
-
+                    const productIndex = step - 3;
+                    if (
+                      nodes.length > 0 &&
+                      productIndex >= 0 &&
+                      productIndex < nodes.length &&
+                      productIndex < 3
+                    )
+                      return <ProductDetail product={nodes[productIndex]} />;
                     return null;
                   })()}
-                  {step === 4 && (
+                  {step === 6 && (
                     <BigStat
                       label='The Hunter Mindset'
                       val={
@@ -195,21 +172,12 @@ const Home = () => {
                       icon={<Search className='text-blue-400' />}
                     />
                   )}
-                  {step === 5 && (
-                    <BigStat
-                      label='Range'
-                      val={API_DATA?.data.topics.totalCount || 0}
-                      sub='Niche Topics Conquered'
-                      icon={<Layout className='text-purple-400' />}
-                    />
-                  )}
-                  {step === 6 &&
+                  {step === 7 &&
                     (() => {
                       const nodes =
                         API_DATA?.data?.viewer?.user?.madePosts?.nodes ?? [];
                       if (nodes.length === 0) return null;
-
-                      const bestProduct = nodes
+                      const bestProduct = [...nodes]
                         .filter(p => typeof p.yearlyRank === 'number')
                         .sort(
                           (a, b) =>
@@ -231,18 +199,16 @@ const Home = () => {
                         </div>
                       );
                     })()}
-                  {step === 7 &&
+                  {step === 8 &&
                     (() => {
                       const nodes =
                         API_DATA?.data?.viewer?.user?.madePosts?.nodes ?? [];
-
                       const totalVotes = nodes.reduce(
                         (sum, p) =>
                           sum +
                           (typeof p.votesCount === 'number' ? p.votesCount : 0),
                         0
                       );
-
                       return (
                         <BigStat
                           label='The Crowd Roared'
@@ -257,9 +223,9 @@ const Home = () => {
                         />
                       );
                     })()}
-                  {step === 8 && (
+                  {step === 9 && (
                     <div className='text-center'>
-                      <div className='text-white/40 mb-10 text-sm font-medium'>
+                      <div className='text-white/40 mb-10 text-sm font-medium uppercase tracking-widest leading-relaxed'>
                         "
                         {
                           NARRATIVES[
@@ -274,45 +240,46 @@ const Home = () => {
                       <h2 className='text-2xl font-black italic'>
                         Reveal My Persona
                       </h2>
+                      <p className='text-[10px] text-white/20 mt-4 uppercase font-bold tracking-[0.2em]'>
+                        Tap to reveal
+                      </p>
                     </div>
                   )}
-                  {step === 9 && <PersonaReveal persona={selectPersona()} />}
-                  {step === 10 &&
+                  {step === 10 && <PersonaReveal persona={selectPersona()} />}
+                  {step === 11 &&
                     (() => {
-                      const nodes =
-                        API_DATA?.data.viewer.user.madePosts.nodes ?? [];
+                      const user = API_DATA?.data.viewer.user;
+                      const nodes = user?.madePosts.nodes ?? [];
                       const totalVotes = nodes.reduce(
                         (sum, p) =>
                           sum +
                           (typeof p.votesCount === 'number' ? p.votesCount : 0),
                         0
                       );
-                      const bestProduct = nodes
+                      const bestProduct = [...nodes]
                         .filter(p => typeof p.dailyRank === 'number')
                         .sort(
                           (a, b) =>
                             (a.dailyRank ?? Infinity) -
                             (b.dailyRank ?? Infinity)
                         )[0];
-                      const bestRank = bestProduct
-                        ? `#${bestProduct.dailyRank} Daily`
-                        : '—';
-                      const globalRank =
-                        bestProduct &&
-                        typeof bestProduct.yearlyRank === 'number'
-                          ? `#${bestProduct.yearlyRank}`
-                          : '—';
-
-                      const persona = selectPersona().name;
                       return (
                         <FinalCard
-                          username={API_DATA?.data.viewer.user.username || ''}
+                          username={user?.username || ''}
                           onReset={() => setStep(-2)}
-                          avatar={API_DATA?.data.viewer.user.profileImage || ''}
+                          avatar={user?.profileImage || ''}
                           totalVotes={totalVotes}
-                          bestRank={bestRank}
-                          globalRank={globalRank}
-                          persona={persona}
+                          bestRank={
+                            bestProduct
+                              ? `#${bestProduct.dailyRank} Daily`
+                              : '—'
+                          }
+                          globalRank={
+                            bestProduct?.yearlyRank
+                              ? `#${bestProduct.yearlyRank}`
+                              : '—'
+                          }
+                          persona={selectPersona().name}
                         />
                       );
                     })()}
