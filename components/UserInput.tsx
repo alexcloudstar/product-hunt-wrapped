@@ -196,7 +196,10 @@ const UserInput = ({
                     <div className='space-y-3'>
                       <div className='flex gap-3'>
                         <span className='text-[#FF6154]'>02</span>
-                        <p>Use any name and paste this Redirect URI:</p>
+                        <p>
+                          Use any name in the application name input and paste
+                          this Redirect URL:
+                        </p>
                       </div>
                       <button
                         onClick={copyRedirect}
