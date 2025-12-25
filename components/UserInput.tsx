@@ -158,7 +158,7 @@ const UserInput = ({
                   </div>
                 )}
                 <iframe
-                  src='https://www.loom.com/embed/da71516513154a7bab27ab2b19c56803'
+                  src='https://www.loom.com/embed/db614599f560483cb2489907a6394ae6'
                   allowFullScreen={true}
                   onLoad={() => setIsVideoLoading(false)}
                   className={`w-full h-full min-h-[300px] transition-opacity duration-500 ${
