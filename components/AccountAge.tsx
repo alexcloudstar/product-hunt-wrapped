@@ -33,7 +33,6 @@ const AccountAge: React.FC<AccountAgeProps> = ({ createdAt }) => {
 
   return (
     <div className='text-center flex flex-col items-center justify-center space-y-6'>
-      {/* Visual Icon with Ring */}
       <div className='relative'>
         <div className='absolute inset-0 bg-[#FF6154]/20 blur-2xl rounded-full' />
         <div className='relative w-20 h-20 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center rotate-3'>

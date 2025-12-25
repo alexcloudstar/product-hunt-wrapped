@@ -20,7 +20,6 @@ const SupportedProducts: React.FC<SupportedProductsProps> = ({ count }) => {
 
   return (
     <div className='text-center flex flex-col items-center justify-center space-y-8'>
-      {/* Animated Heart Icon */}
       <motion.div
         animate={{ scale: [1, 1.1, 1] }}
         transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}

@@ -10,6 +10,7 @@ import {
   Copy,
   Check,
   PlayCircle,
+  Loader2,
 } from 'lucide-react';
 import UserMarquee from './UserMarquee';
 import { Dispatch, SetStateAction, useState } from 'react';
@@ -29,11 +30,17 @@ const UserInput = ({
 }: TUserInputProps) => {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isVideoLoading, setIsVideoLoading] = useState(true);
 
   const copyRedirect = () => {
     navigator.clipboard.writeText('https://product-hunt-wrap.vercel.app');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleModalClose = () => {
+    setIsHelpOpen(false);
+    setIsVideoLoading(true); // Reset for next time it opens
   };
 
   return (
@@ -115,7 +122,7 @@ const UserInput = ({
         <UserMarquee items={recentMakers} reverse={true} />
       </div>
 
-      {/* HELP MODAL WITH VIDEO */}
+      {/* HELP MODAL */}
       <AnimatePresence>
         {isHelpOpen && (
           <motion.div
@@ -131,22 +138,36 @@ const UserInput = ({
               className='max-w-4xl w-full bg-neutral-900 border border-white/10 rounded-[32px] relative overflow-hidden flex flex-col md:flex-row'
             >
               <button
-                onClick={() => setIsHelpOpen(false)}
+                onClick={handleModalClose}
                 className='absolute top-6 right-6 z-50 p-2 bg-black/50 rounded-full text-white/50 hover:text-white transition-colors border border-white/10'
               >
                 <X size={20} />
               </button>
 
-              {/* Left Side: Video Section */}
-              <div className='w-full md:w-3/5 bg-black flex items-center justify-center aspect-video md:aspect-auto border-b md:border-b-0 md:border-r border-white/10'>
+              {/* Video Section with Loader */}
+              <div className='w-full md:w-3/5 bg-black flex items-center justify-center aspect-video md:aspect-auto border-b md:border-b-0 md:border-r border-white/10 relative'>
+                {isVideoLoading && (
+                  <div className='absolute inset-0 flex flex-col items-center justify-center gap-3 bg-neutral-900'>
+                    <Loader2
+                      className='text-[#FF6154] animate-spin'
+                      size={32}
+                    />
+                    <span className='text-[10px] font-black uppercase tracking-[0.2em] text-white/40'>
+                      Loading Tutorial...
+                    </span>
+                  </div>
+                )}
                 <iframe
                   src='https://www.loom.com/embed/da71516513154a7bab27ab2b19c56803'
                   allowFullScreen={true}
-                  className='w-full h-full min-h-[300px]'
+                  onLoad={() => setIsVideoLoading(false)}
+                  className={`w-full h-full min-h-[300px] transition-opacity duration-500 ${
+                    isVideoLoading ? 'opacity-0' : 'opacity-100'
+                  }`}
                 />
               </div>
 
-              {/* Right Side: Quick Steps Section */}
+              {/* Steps Section */}
               <div className='w-full md:w-2/5 p-8 flex flex-col justify-between space-y-8'>
                 <div className='space-y-6'>
                   <div className='flex items-center gap-3'>

@@ -11,12 +11,18 @@ import ProgressBar from '@/components/ProgressBar';
 import SupportedProducts from '@/components/SupportedProducts';
 import UserInput from '@/components/UserInput';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Fingerprint, Globe, Rocket, Search, Zap } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import {
+  Fingerprint,
+  Globe,
+  Rocket,
+  Search,
+  Zap,
+  AlertCircle,
+} from 'lucide-react';
+import { useEffect, useState, useMemo } from 'react';
 import { getMakers } from './actions/getMakers';
 import { getUserData, TUserData } from './actions/getUserData';
 
-// --- EXPANDED PERSONAS ---
 const PERSONAS = {
   LEGEND: {
     name: 'The Industry Legend',
@@ -52,7 +58,6 @@ const PERSONAS = {
   },
 };
 
-// --- EXPANDED NARRATIVES ---
 const NARRATIVES = [
   "You didn't just build, you dominated.",
   '2025: The year your roadmap met reality.',
@@ -69,10 +74,29 @@ const Home = () => {
   const [step, setStep] = useState(-2);
   const [token, setToken] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // NEW: For button loading
+  const [submitError, setSubmitError] = useState<string | null>(null); // NEW: For error handling
   const [analysisText, setAnalysisText] = useState('Scanning API...');
   const [recentMakers, setRecentMakers] = useState<string[]>([]);
 
-  const TOTAL_STEPS = 11;
+  const slides = useMemo(() => {
+    if (!API_DATA) return [];
+    const user = API_DATA.data.viewer.user;
+    const nodes = user.madePosts.nodes ?? [];
+    const activeSlides: string[] = [];
+    activeSlides.push('summary', 'age');
+    if (user.votedPosts.totalCount > 0) activeSlides.push('support');
+    nodes.slice(0, 3).forEach((_, i) => activeSlides.push(`product-${i}`));
+    if (user.submittedPosts.totalCount > 0) activeSlides.push('hunter');
+    if (nodes.some(p => typeof p.yearlyRank === 'number'))
+      activeSlides.push('rank');
+    const totalVotes = nodes.reduce((sum, p) => sum + (p.votesCount || 0), 0);
+    if (totalVotes > 0) activeSlides.push('votes');
+    activeSlides.push('persona-trigger', 'persona-reveal', 'final');
+    return activeSlides;
+  }, [API_DATA]);
+
+  const TOTAL_STEPS = slides.length - 1;
 
   const next = () => step < TOTAL_STEPS && setStep(s => s + 1);
   const prev = () => step > 0 && setStep(s => s - 1);
@@ -91,7 +115,8 @@ const Home = () => {
         if (i === sequence.length - 1) {
           setTimeout(() => {
             setAnalyzing(false);
-            setStep(10);
+            const revealIndex = slides.indexOf('persona-reveal');
+            setStep(revealIndex);
           }, 1000);
         }
       }, i * 1200);
@@ -100,9 +125,25 @@ const Home = () => {
 
   const handleDbSubmit = async () => {
     if (!token) return;
-    const data = await getUserData(token);
-    setAPI_DATA(data);
-    setStep(-1);
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const data = await getUserData(token);
+
+      // Basic validation if the API returns an error or no user
+      if (!data || !data.data?.viewer?.user) {
+        throw new Error('Invalid Token');
+      }
+
+      setAPI_DATA(data);
+      setStep(-1);
+    } catch (err) {
+      console.error(err);
+      setSubmitError('Invalid token or connection error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -117,7 +158,6 @@ const Home = () => {
 
   const selectPersona = () => {
     if (!API_DATA) return PERSONAS.NEWBIE;
-
     const user = API_DATA.data.viewer.user;
     const madePosts = user.madePosts.nodes ?? [];
     const totalVotes = madePosts.reduce(
@@ -128,7 +168,6 @@ const Home = () => {
     const products = user.madePosts.totalCount || 0;
     const bestYearly = Math.min(...madePosts.map(p => p.yearlyRank || 9999));
 
-    // Logic-based determination
     if (products > 3 && totalVotes > 2000 && bestYearly < 500)
       return PERSONAS.LEGEND;
     if (bestYearly < 1000) return PERSONAS.GLOBAL;
@@ -137,9 +176,10 @@ const Home = () => {
     if (hunts > products && hunts > 5) return PERSONAS.HUNTER;
     if (user.votedPosts.totalCount > 100) return PERSONAS.PILLAR;
     if (products >= 1) return PERSONAS.ARCHITECT;
-
     return PERSONAS.NEWBIE;
   };
+
+  const currentSlideType = slides[step] || '';
 
   return (
     <main className='relative min-h-screen bg-black text-white font-sans overflow-hidden select-none'>
@@ -152,6 +192,33 @@ const Home = () => {
               recentMakers={recentMakers}
               onSubmit={handleDbSubmit}
             />
+
+            {/* NEW: Global Error Toast for UserInput */}
+            <AnimatePresence>
+              {submitError && (
+                <motion.div
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 50, opacity: 0 }}
+                  className='fixed bottom-32 left-1/2 -translate-x-1/2 z-[100] bg-red-500/10 border border-red-500/50 backdrop-blur-xl px-6 py-3 rounded-2xl flex items-center gap-3 text-red-500 text-sm font-bold'
+                >
+                  <AlertCircle size={18} />
+                  {submitError}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* NEW: Global Loading Overlay */}
+            {isSubmitting && (
+              <div className='fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-center justify-center'>
+                <div className='flex flex-col items-center gap-4'>
+                  <div className='w-12 h-12 border-4 border-[#FF6154]/20 border-t-[#FF6154] rounded-full animate-spin' />
+                  <p className='text-[10px] font-black uppercase tracking-[0.3em] text-white/40'>
+                    Fetching your 2025...
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         ) : step === -1 ? (
           <Landing setStep={setStep} />
@@ -169,9 +236,10 @@ const Home = () => {
               onClick={e => {
                 const target = e.target as HTMLElement;
                 if (target.closest('button') || target.closest('a')) return;
-
                 if (e.clientX > window.innerWidth / 2) {
-                  step === 9 ? startAnalysis() : next();
+                  currentSlideType === 'persona-trigger'
+                    ? startAnalysis()
+                    : next();
                 } else {
                   prev();
                 }
@@ -179,14 +247,13 @@ const Home = () => {
             >
               <AnimatePresence mode='wait'>
                 <motion.div
-                  key={step}
+                  key={currentSlideType}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 1.1 }}
                   className='w-full max-w-lg'
                 >
-                  {/* 0: Initial Stat */}
-                  {step === 0 && (
+                  {currentSlideType === 'summary' && (
                     <BigStat
                       label='The 2025 Summary'
                       val={API_DATA?.data.viewer.user.madePosts.totalCount || 0}
@@ -194,39 +261,26 @@ const Home = () => {
                       icon={<Rocket className='text-[#FF6154]' />}
                     />
                   )}
-
-                  {/* 1: Longevity */}
-                  {step === 1 && API_DATA && (
+                  {currentSlideType === 'age' && API_DATA && (
                     <AccountAge
                       createdAt={API_DATA.data.viewer.user.createdAt}
                     />
                   )}
-
-                  {/* 2: Support */}
-                  {step === 2 && API_DATA && (
+                  {currentSlideType === 'support' && API_DATA && (
                     <SupportedProducts
                       count={API_DATA.data.viewer.user.votedPosts.totalCount}
                     />
                   )}
-
-                  {/* 3, 4, 5: Dynamic Product Highlights */}
-                  {(() => {
-                    const nodes =
-                      API_DATA?.data.viewer.user.madePosts.nodes ?? [];
-                    const productIndex = step - 3;
-                    if (
-                      nodes.length > 0 &&
-                      productIndex >= 0 &&
-                      productIndex < nodes.length &&
-                      productIndex < 3
-                    ) {
-                      return <ProductDetail product={nodes[productIndex]} />;
-                    }
-                    return null;
-                  })()}
-
-                  {/* 6: Hunting Stats */}
-                  {step === 6 && (
+                  {currentSlideType.startsWith('product-') &&
+                    (() => {
+                      const index = parseInt(currentSlideType.split('-')[1]);
+                      const product =
+                        API_DATA?.data.viewer.user.madePosts.nodes[index];
+                      return product ? (
+                        <ProductDetail product={product} />
+                      ) : null;
+                    })()}
+                  {currentSlideType === 'hunter' && (
                     <BigStat
                       label='The Hunter Mindset'
                       val={
@@ -237,9 +291,7 @@ const Home = () => {
                       icon={<Search className='text-blue-400' />}
                     />
                   )}
-
-                  {/* 7: Global Achievement */}
-                  {step === 7 &&
+                  {currentSlideType === 'rank' &&
                     (() => {
                       const nodes =
                         API_DATA?.data?.viewer?.user?.madePosts?.nodes ?? [];
@@ -248,7 +300,6 @@ const Home = () => {
                         .sort(
                           (a, b) => (a.yearlyRank || 0) - (b.yearlyRank || 0)
                         )[0];
-
                       return (
                         <div className='text-center'>
                           <Globe
@@ -264,9 +315,7 @@ const Home = () => {
                         </div>
                       );
                     })()}
-
-                  {/* 8: Total Upvotes */}
-                  {step === 8 &&
+                  {currentSlideType === 'votes' &&
                     (() => {
                       const nodes =
                         API_DATA?.data?.viewer?.user?.madePosts?.nodes ?? [];
@@ -288,9 +337,7 @@ const Home = () => {
                         />
                       );
                     })()}
-
-                  {/* 9: Transition to Persona */}
-                  {step === 9 && (
+                  {currentSlideType === 'persona-trigger' && (
                     <div className='text-center'>
                       <div className='text-white/40 mb-10 text-sm font-medium uppercase tracking-widest leading-relaxed px-4'>
                         "
@@ -315,12 +362,10 @@ const Home = () => {
                       </p>
                     </div>
                   )}
-
-                  {/* 10: The Reveal */}
-                  {step === 10 && <PersonaReveal persona={selectPersona()} />}
-
-                  {/* 11: Summary Card */}
-                  {step === 11 &&
+                  {currentSlideType === 'persona-reveal' && (
+                    <PersonaReveal persona={selectPersona()} />
+                  )}
+                  {currentSlideType === 'final' &&
                     (() => {
                       const user = API_DATA?.data.viewer.user;
                       const nodes = user?.madePosts.nodes ?? [];
@@ -331,11 +376,14 @@ const Home = () => {
                       const bestProduct = [...nodes].sort(
                         (a, b) => (a.dailyRank || 999) - (b.dailyRank || 999)
                       )[0];
-
                       return (
                         <FinalCard
                           username={user?.username || ''}
-                          onReset={() => setStep(-2)}
+                          onReset={() => {
+                            setToken('');
+                            setStep(-2);
+                            setSubmitError(null);
+                          }}
                           avatar={user?.profileImage || ''}
                           totalVotes={totalVotes}
                           bestRank={
