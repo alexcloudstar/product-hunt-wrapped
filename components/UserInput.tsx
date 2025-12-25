@@ -3,7 +3,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight,
-  HelpCircle,
   X,
   ExternalLink,
   Zap,
@@ -158,8 +157,10 @@ const UserInput = ({
                   </div>
                 )}
                 <iframe
-                  src='https://www.loom.com/embed/db614599f560483cb2489907a6394ae6'
-                  allowFullScreen={true}
+                  src='https://www.youtube.com/embed/I04J5NGb7aA?autoplay=1'
+                  title='YouTube video player'
+                  allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+                  allowFullScreen
                   onLoad={() => setIsVideoLoading(false)}
                   className={`w-full h-full min-h-[300px] transition-opacity duration-500 ${
                     isVideoLoading ? 'opacity-0' : 'opacity-100'
@@ -230,6 +231,7 @@ const UserInput = ({
                 <a
                   href='https://www.producthunt.com/v2/oauth/applications'
                   target='_blank'
+                  rel='noopener noreferrer'
                   className='flex items-center justify-center gap-2 w-full py-4 bg-[#FF6154] text-white rounded-2xl font-black italic uppercase text-[10px] tracking-[0.2em] hover:brightness-110 transition-all'
                 >
                   Go to API Dashboard <ExternalLink size={14} />
