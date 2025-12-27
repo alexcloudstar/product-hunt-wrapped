@@ -51,7 +51,6 @@ const UserInput = ({
       exit={{ opacity: 0 }}
       className='h-screen flex flex-col items-center justify-between bg-black relative overflow-hidden'
     >
-      {/* Background Glow */}
       <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none'>
         <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#FF6154]/5 blur-[120px] rounded-full' />
       </div>
@@ -132,7 +131,6 @@ const UserInput = ({
               </span>
             </button>
 
-            {/* ROADMAP LINK INTEGRATION */}
             <div className='pt-6 border-t border-white/5 flex flex-col items-center gap-3'>
               <p className='text-[9px] font-bold text-white/20 uppercase tracking-[0.3em]'>
                 System_Update: 2026_Protocols
@@ -162,7 +160,6 @@ const UserInput = ({
         <UserMarquee items={recentMakers} reverse={true} />
       </div>
 
-      {/* HELP MODAL */}
       <AnimatePresence>
         {isHelpOpen && (
           <motion.div
@@ -184,7 +181,6 @@ const UserInput = ({
                 <X size={20} />
               </button>
 
-              {/* Video Section with Loader */}
               <div className='w-full md:w-3/5 bg-black flex items-center justify-center aspect-video md:aspect-auto border-b md:border-b-0 md:border-r border-white/10 relative'>
                 {isVideoLoading && (
                   <div className='absolute inset-0 flex flex-col items-center justify-center gap-3 bg-neutral-900'>
@@ -209,7 +205,6 @@ const UserInput = ({
                 />
               </div>
 
-              {/* Steps Section */}
               <div className='w-full md:w-2/5 p-8 flex flex-col justify-between space-y-8'>
                 <div className='space-y-6'>
                   <div className='flex items-center gap-3'>

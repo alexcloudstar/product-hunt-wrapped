@@ -11,7 +11,6 @@ export const suggestions = pgTable('suggestions', {
   id: uuid('id').defaultRandom().primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   code: varchar('code', { length: 50 }).notNull().unique(),
-  description: text('description'),
   status: varchar('status', { length: 50 }).default('RESEARCH').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
