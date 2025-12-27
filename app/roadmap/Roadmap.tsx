@@ -22,18 +22,24 @@ export default function Roadmap({
 }) {
   const [suggestion, setSuggestion] = useState('');
   const [isPending, startTransition] = useTransition();
+
   const [votedIds, setVotedIds] = useState<string[]>([]);
 
-  // 1. HYDRATION: Load votes from local storage on mount
   useEffect(() => {
-    const savedVotes = localStorage.getItem('user_votes');
-    if (savedVotes) {
-      try {
-        setVotedIds(JSON.parse(savedVotes));
-      } catch (e) {
-        console.error('STORAGE_SYNC_ERROR');
+    const syncStorage = () => {
+      const savedVotes = localStorage.getItem('user_votes');
+      if (savedVotes) {
+        try {
+          const parsed = JSON.parse(savedVotes);
+
+          setVotedIds(parsed);
+        } catch {
+          console.error('STORAGE_SYNC_ERROR');
+        }
       }
-    }
+    };
+
+    syncStorage();
   }, []);
 
   const handleAddFeature = async (e: React.FormEvent) => {
@@ -49,21 +55,17 @@ export default function Roadmap({
   };
 
   const handleVote = async (id: string) => {
-    // Prevent double voting locally
     if (votedIds.includes(id)) return;
 
-    // 2. Local Update
     const newVotes = [...votedIds, id];
     setVotedIds(newVotes);
     localStorage.setItem('user_votes', JSON.stringify(newVotes));
 
-    // 3. Server Update (revalidatePath will update initialFeatures automatically)
     await addUpvote(id);
   };
 
   return (
     <main className='min-h-screen bg-black text-white font-mono selection:bg-[#FF6154] selection:text-white'>
-      {/* Background Grid */}
       <div
         className='fixed inset-0 opacity-[0.05] pointer-events-none'
         style={{
@@ -74,7 +76,6 @@ export default function Roadmap({
       />
 
       <div className='relative max-w-7xl mx-auto px-8 py-16'>
-        {/* Navigation */}
         <nav className='flex justify-between items-start mb-32'>
           <Link
             href='/'
@@ -93,12 +94,11 @@ export default function Roadmap({
               ROADMAP_v2.0.26
             </div>
             <div className='text-white/20 text-[10px] uppercase tracking-widest'>
-              Status: Open_Protocol // Live_Feed
+              Status: Open_Protocol
             </div>
           </div>
         </nav>
 
-        {/* Hero */}
         <section className='grid grid-cols-1 lg:grid-cols-2 gap-20 mb-40'>
           <div>
             <h1 className='text-8xl md:text-[10rem] font-black italic uppercase leading-[0.8] tracking-tighter'>
@@ -133,11 +133,9 @@ export default function Roadmap({
           </div>
         </section>
 
-        {/* The List */}
         <section className='border-t border-white/10'>
           {initialFeatures?.map((f, i) => {
             const hasVoted = votedIds.includes(f.id);
-            // We use the DB length directly to avoid the +2 glitch
             const voteCount = f.upvotes.length;
 
             return (
@@ -205,7 +203,6 @@ export default function Roadmap({
           })}
         </section>
 
-        {/* Footer */}
         <footer className='mt-40 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-20 border-t border-white/5 pt-8'>
           <div className='space-y-2'>
             <div className='text-[10px] font-black uppercase'>System_Load</div>
@@ -223,7 +220,7 @@ export default function Roadmap({
             <div>Auth: OPEN_ACCESS</div>
           </div>
           <div className='space-y-2 text-[10px] font-black uppercase md:col-span-2 text-right italic'>
-            Wrapped_2026 // Production_Build_Final
+            Product_Hunt_Wrapped_2026
           </div>
         </footer>
       </div>
