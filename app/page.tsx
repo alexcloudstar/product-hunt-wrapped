@@ -74,8 +74,8 @@ const Home = () => {
   const [step, setStep] = useState(-2);
   const [token, setToken] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // NEW: For button loading
-  const [submitError, setSubmitError] = useState<string | null>(null); // NEW: For error handling
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [analysisText, setAnalysisText] = useState('Scanning API...');
   const [recentMakers, setRecentMakers] = useState<string[]>([]);
 
@@ -131,7 +131,6 @@ const Home = () => {
     try {
       const data = await getUserData(token);
 
-      // Basic validation if the API returns an error or no user
       if (!data || !data.data?.viewer?.user) {
         throw new Error('Invalid Token');
       }

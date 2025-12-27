@@ -41,7 +41,7 @@ const UserInput = ({
 
   const handleModalClose = () => {
     setIsHelpOpen(false);
-    setIsVideoLoading(true); // Reset for next time it opens
+    setIsVideoLoading(true);
   };
 
   return (

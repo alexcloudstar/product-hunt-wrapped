@@ -7,7 +7,6 @@ type SupportedProductsProps = {
 };
 
 const SupportedProducts: React.FC<SupportedProductsProps> = ({ count }) => {
-  // Determine a "Supporter Tier" based on volume
   const getTier = (c: number) => {
     if (c > 1000)
       return { label: 'Legendary Hunter', color: 'text-purple-400' };

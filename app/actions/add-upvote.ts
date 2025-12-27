@@ -3,7 +3,7 @@
 import { db } from '@/db';
 import { upvotes } from '@/db/schema';
 import { revalidatePath } from 'next/cache';
-import { crypto } from 'next/dist/compiled/@edge-runtime/primitives'; // Standard Node/Next crypto
+import { crypto } from 'next/dist/compiled/@edge-runtime/primitives';
 
 export async function addUpvote(suggestionId: string) {
   try {
