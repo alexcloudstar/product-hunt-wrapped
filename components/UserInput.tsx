@@ -14,6 +14,7 @@ import {
 import UserMarquee from './UserMarquee';
 import { Dispatch, SetStateAction, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 type TUserInputProps = {
   token: string;
@@ -117,18 +118,43 @@ const UserInput = ({
             </div>
           </div>
 
-          <button
-            onClick={() => setIsHelpOpen(true)}
-            className='flex items-center justify-center gap-2 w-full text-[#FF6154] transition-colors group underline underline-offset-4 decoration-[#FF6154]/30'
-          >
-            <PlayCircle
-              size={14}
-              className='group-hover:scale-110 transition-transform'
-            />
-            <span className='text-[10px] font-black uppercase tracking-[0.2em]'>
-              Watch Tutorial: How to get token
-            </span>
-          </button>
+          <div className='flex flex-col gap-4'>
+            <button
+              onClick={() => setIsHelpOpen(true)}
+              className='flex items-center justify-center gap-2 w-full text-[#FF6154] transition-colors group underline underline-offset-4 decoration-[#FF6154]/30'
+            >
+              <PlayCircle
+                size={14}
+                className='group-hover:scale-110 transition-transform'
+              />
+              <span className='text-[10px] font-black uppercase tracking-[0.2em]'>
+                Watch Tutorial: How to get token
+              </span>
+            </button>
+
+            {/* ROADMAP LINK INTEGRATION */}
+            <div className='pt-6 border-t border-white/5 flex flex-col items-center gap-3'>
+              <p className='text-[9px] font-bold text-white/20 uppercase tracking-[0.3em]'>
+                System_Update: 2026_Protocols
+              </p>
+              <Link
+                href='/roadmap'
+                className='group flex items-center gap-2 bg-white/[0.03] border border-white/10 hover:border-[#FF6154]/50 px-6 py-2.5 rounded-full transition-all duration-300'
+              >
+                <Zap
+                  size={12}
+                  className='text-[#FF6154] group-hover:animate-pulse'
+                />
+                <span className='text-[10px] font-black italic uppercase tracking-widest text-white/60 group-hover:text-white'>
+                  Influence the Roadmap
+                </span>
+                <ArrowRight
+                  size={10}
+                  className='text-white/20 group-hover:translate-x-1 group-hover:text-[#FF6154] transition-all'
+                />
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
