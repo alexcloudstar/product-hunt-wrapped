@@ -193,7 +193,6 @@ const Home = () => {
               onSubmit={handleDbSubmit}
             />
 
-            {/* NEW: Global Error Toast for UserInput */}
             <AnimatePresence>
               {submitError && (
                 <motion.div
@@ -208,7 +207,6 @@ const Home = () => {
               )}
             </AnimatePresence>
 
-            {/* NEW: Global Loading Overlay */}
             {isSubmitting && (
               <div className='fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-center justify-center'>
                 <div className='flex flex-col items-center gap-4'>

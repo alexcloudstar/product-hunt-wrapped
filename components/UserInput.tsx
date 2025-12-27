@@ -14,6 +14,7 @@ import {
 import UserMarquee from './UserMarquee';
 import { Dispatch, SetStateAction, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 type TUserInputProps = {
   token: string;
@@ -50,7 +51,6 @@ const UserInput = ({
       exit={{ opacity: 0 }}
       className='h-screen flex flex-col items-center justify-between bg-black relative overflow-hidden'
     >
-      {/* Background Glow */}
       <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none'>
         <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#FF6154]/5 blur-[120px] rounded-full' />
       </div>
@@ -117,18 +117,42 @@ const UserInput = ({
             </div>
           </div>
 
-          <button
-            onClick={() => setIsHelpOpen(true)}
-            className='flex items-center justify-center gap-2 w-full text-[#FF6154] transition-colors group underline underline-offset-4 decoration-[#FF6154]/30'
-          >
-            <PlayCircle
-              size={14}
-              className='group-hover:scale-110 transition-transform'
-            />
-            <span className='text-[10px] font-black uppercase tracking-[0.2em]'>
-              Watch Tutorial: How to get token
-            </span>
-          </button>
+          <div className='flex flex-col gap-4'>
+            <button
+              onClick={() => setIsHelpOpen(true)}
+              className='flex items-center justify-center gap-2 w-full text-[#FF6154] transition-colors group underline underline-offset-4 decoration-[#FF6154]/30'
+            >
+              <PlayCircle
+                size={14}
+                className='group-hover:scale-110 transition-transform'
+              />
+              <span className='text-[10px] font-black uppercase tracking-[0.2em]'>
+                Watch Tutorial: How to get token
+              </span>
+            </button>
+
+            <div className='pt-6 border-t border-white/5 flex flex-col items-center gap-3'>
+              <p className='text-[9px] font-bold text-white/20 uppercase tracking-[0.3em]'>
+                System_Update: 2026_Protocols
+              </p>
+              <Link
+                href='/roadmap'
+                className='group flex items-center gap-2 bg-white/[0.03] border border-white/10 hover:border-[#FF6154]/50 px-6 py-2.5 rounded-full transition-all duration-300'
+              >
+                <Zap
+                  size={12}
+                  className='text-[#FF6154] group-hover:animate-pulse'
+                />
+                <span className='text-[10px] font-black italic uppercase tracking-widest text-white/60 group-hover:text-white'>
+                  Influence the Roadmap
+                </span>
+                <ArrowRight
+                  size={10}
+                  className='text-white/20 group-hover:translate-x-1 group-hover:text-[#FF6154] transition-all'
+                />
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -136,7 +160,6 @@ const UserInput = ({
         <UserMarquee items={recentMakers} reverse={true} />
       </div>
 
-      {/* HELP MODAL */}
       <AnimatePresence>
         {isHelpOpen && (
           <motion.div
@@ -158,7 +181,6 @@ const UserInput = ({
                 <X size={20} />
               </button>
 
-              {/* Video Section with Loader */}
               <div className='w-full md:w-3/5 bg-black flex items-center justify-center aspect-video md:aspect-auto border-b md:border-b-0 md:border-r border-white/10 relative'>
                 {isVideoLoading && (
                   <div className='absolute inset-0 flex flex-col items-center justify-center gap-3 bg-neutral-900'>
@@ -183,7 +205,6 @@ const UserInput = ({
                 />
               </div>
 
-              {/* Steps Section */}
               <div className='w-full md:w-2/5 p-8 flex flex-col justify-between space-y-8'>
                 <div className='space-y-6'>
                   <div className='flex items-center gap-3'>
