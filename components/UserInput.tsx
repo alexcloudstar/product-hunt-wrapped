@@ -34,7 +34,7 @@ const UserInput = ({
   const [isVideoLoading, setIsVideoLoading] = useState(true);
 
   const copyRedirect = () => {
-    navigator.clipboard.writeText('https://product-hunt-wrap.vercel.app');
+    navigator.clipboard.writeText('https://product-hunt-wrapped.vercel.app');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -65,16 +65,16 @@ const UserInput = ({
       <div className='w-full max-w-md px-8 z-20 space-y-12'>
         <div className='text-center space-y-4'>
           <a
-            href='https://www.producthunt.com/products/product-hunt-wrapped-2025?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-product-hunt-wrapped-2025'
+            href='https://www.producthunt.com/products/product-hunt-wrapped-2025?embed=true&amp;utm_source=badge-top-post-badge&amp;utm_medium=badge&amp;utm_campaign=badge-product-hunt-wrapped-2025'
             target='_blank'
             rel='noopener noreferrer'
             className='flex items-center justify-center'
           >
             <Image
-              alt='Product Hunt Wrapped 2025 - Your 2025 maker journey, visualized. Find your rank. | Product Hunt'
-              width={250}
-              height={54}
-              src='https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1054380&amp;theme=light&amp;t=1766664387356'
+              alt='Product Hunt Wrapped 2025 - Your 2025 maker journey, visualized. | Product Hunt'
+              width='250'
+              height='54'
+              src='https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=1054380&amp;theme=light&amp;period=daily&amp;t=1766921891183'
             />
           </a>
 
