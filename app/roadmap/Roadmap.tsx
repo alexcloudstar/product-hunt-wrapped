@@ -110,44 +110,48 @@ export default function Roadmap({
               2025 was a snapshot. 2026 is the full feature. Submit your
               protocols below to influence the master build.
             </p>
-<form onSubmit={handleAddFeature} className='relative group flex flex-col gap-4'>
-  <div className="flex flex-col">
-    <label className="text-[10px] font-black text-[#FF6154] uppercase tracking-[0.2em] mb-2 ml-1">
-      Input_New_Protocol:
-    </label>
-    <div className="relative">
-      <input
-        value={suggestion}
-        onChange={e => setSuggestion(e.target.value)}
-        disabled={isPending}
-        className='w-full bg-white/[0.03] border-l-4 border-[#FF6154] p-6 text-2xl font-black uppercase outline-none focus:bg-white/[0.07] transition-all disabled:opacity-50 placeholder:text-white/5'
-        placeholder={isPending ? 'INITIALIZING...' : 'TYPE_YOUR_IDEA_HERE'}
-      />
-      <button
-        type='submit'
-        disabled={isPending || !suggestion}
-        className={`absolute right-4 top-1/2 -translate-y-1/2 px-6 py-3 font-black uppercase italic transition-all flex items-center gap-2 ${
-          !suggestion || isPending 
-            ? 'bg-white/5 text-white/20 cursor-not-allowed' 
-            : 'bg-[#FF6154] text-white hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,97,84,0.3)]'
-        }`}
-      >
-        {isPending ? (
-          <Loader2 className='animate-spin' size={18} />
-        ) : (
-          <>
-            <span className="text-sm">Submit</span>
-            <Plus size={18} strokeWidth={3} />
-          </>
-        )}
-      </button>
-    </div>
-  </div>
-  <p className='text-[9px] text-white/20 uppercase tracking-widest px-1'>
-    *All submissions are peer-reviewed by the community.
-  </p>
-</form>
-
+            <form
+              onSubmit={handleAddFeature}
+              className='relative group flex flex-col gap-4'
+            >
+              <div className='flex flex-col'>
+                <label className='text-[10px] font-black text-[#FF6154] uppercase tracking-[0.2em] mb-2 ml-1'>
+                  Input_New_Protocol:
+                </label>
+                <div className='relative'>
+                  <input
+                    value={suggestion}
+                    onChange={e => setSuggestion(e.target.value)}
+                    disabled={isPending}
+                    className='w-full bg-white/[0.03] border-l-4 border-[#FF6154] p-6 text-2xl font-black uppercase outline-none focus:bg-white/[0.07] transition-all disabled:opacity-50 placeholder:text-white/5'
+                    placeholder={
+                      isPending ? 'INITIALIZING...' : 'TYPE_YOUR_IDEA_HERE'
+                    }
+                  />
+                  <button
+                    type='submit'
+                    disabled={isPending || !suggestion}
+                    className={`absolute right-4 top-1/2 -translate-y-1/2 px-6 py-3 font-black uppercase italic transition-all flex items-center bg-[#FF6154] text-white gap-2 ${
+                      !suggestion || isPending
+                        ? 'cursor-not-allowed'
+                        : 'hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,97,84,0.3)]'
+                    }`}
+                  >
+                    {isPending ? (
+                      <Loader2 className='animate-spin' size={18} />
+                    ) : (
+                      <>
+                        <span className='text-sm'>Submit</span>
+                        <Plus size={18} strokeWidth={3} />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+              <p className='text-[9px] text-white/20 uppercase tracking-widest px-1'>
+                *All submissions are peer-reviewed by the community.
+              </p>
+            </form>
           </div>
         </section>
 
